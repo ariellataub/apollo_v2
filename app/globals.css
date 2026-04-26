@@ -1,26 +1,301 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ==========================================================================
+   Apollo design tokens — light-mode-only.
+   Hex values pulled from Apollo_Wireframes_v4.html. Shadcn semantic tokens
+   (--background, --primary, etc.) are aliased to Apollo tokens so shadcn
+   components inherit our palette automatically.
+   ========================================================================== */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-serif);
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* Apollo-specific tokens, exposed as utilities (text-apollo-mute, bg-apollo-panel2, etc.) */
+  --color-apollo-bg: var(--apollo-bg);
+  --color-apollo-panel: var(--apollo-panel);
+  --color-apollo-panel2: var(--apollo-panel2);
+  --color-apollo-line: var(--apollo-line);
+  --color-apollo-line-soft: var(--apollo-line-soft);
+  --color-apollo-ink: var(--apollo-ink);
+  --color-apollo-ink-soft: var(--apollo-ink-soft);
+  --color-apollo-mute: var(--apollo-mute);
+  --color-apollo-accent: var(--apollo-accent);
+  --color-apollo-accent2: var(--apollo-accent2);
+  --color-apollo-warn: var(--apollo-warn);
+  --color-apollo-bad: var(--apollo-bad);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* Apollo palette */
+  --apollo-bg: #fafaf7;
+  --apollo-panel: #ffffff;
+  --apollo-panel2: #f6f4ef;
+  --apollo-line: #e6e2da;
+  --apollo-line-soft: #efeae0;
+  --apollo-ink: #1a1a1a;
+  --apollo-ink-soft: #444444;
+  --apollo-mute: #777067;
+  --apollo-accent: #1f5d3f;       /* deep green — primary */
+  --apollo-accent-hover: #19503a;
+  --apollo-accent2: #2c5d8f;      /* blue — secondary accent */
+  --apollo-warn: #a35a1c;
+  --apollo-bad: #9b2f2f;
+
+  /* Fonts */
+  --font-serif: Georgia, "Times New Roman", "Iowan Old Style", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Shadcn semantic tokens mapped to Apollo palette */
+  --background: var(--apollo-bg);
+  --foreground: var(--apollo-ink);
+  --card: var(--apollo-panel);
+  --card-foreground: var(--apollo-ink);
+  --popover: var(--apollo-panel);
+  --popover-foreground: var(--apollo-ink);
+  --primary: var(--apollo-accent);
+  --primary-foreground: #ffffff;
+  --secondary: var(--apollo-panel2);
+  --secondary-foreground: var(--apollo-ink);
+  --muted: var(--apollo-panel2);
+  --muted-foreground: var(--apollo-mute);
+  --accent: var(--apollo-panel2);
+  --accent-foreground: var(--apollo-ink);
+  --destructive: var(--apollo-bad);
+  --border: var(--apollo-line);
+  --input: var(--apollo-line);
+  --ring: var(--apollo-accent);
+  --radius: 0.375rem; /* 6px — matches wireframe panel radius */
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--border);
+  }
+  html {
+    font-family: var(--font-serif);
+  }
+  body {
+    background: var(--apollo-bg);
+    color: var(--apollo-ink);
+    font-family: var(--font-serif);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Labels, table headers, chips, KPI labels — opt back into sans-serif */
+  .font-label {
+    font-family: var(--font-sans);
+    letter-spacing: 0.5px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ==========================================================================
+   Apollo component classes — mirrors the wireframe's bespoke styles
+   ========================================================================== */
+
+@layer components {
+  .apollo-panel {
+    background: var(--apollo-panel);
+    border: 1px solid var(--apollo-line);
+    border-radius: 6px;
+  }
+  .apollo-panel-2 {
+    background: var(--apollo-panel2);
+    border: 1px solid var(--apollo-line);
+    border-radius: 6px;
+  }
+
+  /* Brand mark — green square with italic serif "A" */
+  .apollo-brand-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background: var(--apollo-accent);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-size: 16px;
+    font-weight: 700;
+    font-style: italic;
+  }
+
+  /* Sidebar nav item with active green left-border */
+  .apollo-nav-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: var(--apollo-mute);
+    cursor: pointer;
+    font-size: 14.5px;
+    font-family: var(--font-sans);
+    text-decoration: none;
+    position: relative;
+  }
+  .apollo-nav-item:hover {
+    color: var(--apollo-ink);
+    background: var(--apollo-panel2);
+  }
+  .apollo-nav-item[data-active="true"] {
+    color: var(--apollo-ink);
+    background: var(--apollo-panel2);
+  }
+  .apollo-nav-item[data-active="true"]::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--apollo-accent);
+    border-radius: 1px;
+  }
+
+  /* Chip */
+  .apollo-chip {
+    padding: 1px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-sans);
+  }
+  .apollo-chip-priority-Critical { background: #f9e3e1; color: #9b2f2f; }
+  .apollo-chip-priority-High { background: #fbf0df; color: #8c4f1c; }
+  .apollo-chip-priority-Standard { background: #f0eee8; color: #5a554c; }
+  .apollo-chip-priority-Light-touch { background: #eaf2ed; color: #1f5d3f; }
+
+  /* Health pill (1–10 score) */
+  .apollo-health-pill {
+    width: 30px;
+    height: 22px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12.5px;
+    font-family: var(--font-sans);
+  }
+  .apollo-health-9, .apollo-health-10 { background: #e7f1ea; color: #1f5d3f; }
+  .apollo-health-7, .apollo-health-8 { background: #e7eef5; color: #2c5d8f; }
+  .apollo-health-5, .apollo-health-6 { background: #fbf0df; color: #8c4f1c; }
+  .apollo-health-3, .apollo-health-4 { background: #f9e3e1; color: #9b2f2f; }
+  .apollo-health-1, .apollo-health-2 { background: #f3cdc9; color: #7d1f1f; }
+
+  /* Progress bar */
+  .apollo-progress-bar {
+    height: 4px;
+    background: var(--apollo-line-soft);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .apollo-progress-fill {
+    height: 100%;
+    background: var(--apollo-accent);
+  }
+
+  /* Table heading */
+  .apollo-table thead th {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: 0.8px;
+    color: var(--apollo-mute);
+    text-transform: uppercase;
+  }
+  .apollo-table tbody tr.apollo-row {
+    border-top: 1px solid var(--apollo-line-soft);
+  }
+  .apollo-table tbody tr.apollo-row:hover {
+    background: #f9f7f1;
+    cursor: pointer;
+  }
+  .apollo-table td {
+    font-size: 14px;
+  }
+
+  /* Buttons that mirror the wireframe (alongside shadcn Button) */
+  .apollo-btn {
+    background: var(--apollo-accent);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    border: 1px solid var(--apollo-accent);
+    font-family: var(--font-sans);
+  }
+  .apollo-btn:hover { background: var(--apollo-accent-hover); border-color: var(--apollo-accent-hover); }
+
+  .apollo-btn-ghost {
+    background: transparent;
+    color: var(--apollo-ink);
+    border: 1px solid var(--apollo-line);
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    font-family: var(--font-sans);
+  }
+  .apollo-btn-ghost:hover { background: var(--apollo-panel2); border-color: #d4cfc4; }
+
+  /* Inputs that match the wireframe look */
+  .apollo-input {
+    background: #fff;
+    border: 1px solid var(--apollo-line);
+    border-radius: 4px;
+    padding: 8px 10px;
+    color: var(--apollo-ink);
+    font-size: 14px;
+    width: 100%;
+    font-family: var(--font-serif);
+  }
+  .apollo-input:focus {
+    outline: none;
+    border-color: var(--apollo-accent);
+  }
 }
