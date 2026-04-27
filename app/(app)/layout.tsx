@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { SidebarNav } from "@/app/_components/sidebar-nav";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { logoutAction } from "@/app/(auth)/actions";
@@ -21,6 +22,8 @@ export default async function AppShellLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
 
   // Pull profile row (created by the auth-trigger on signup)
   let fullName: string | null = null;
