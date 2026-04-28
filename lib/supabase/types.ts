@@ -46,6 +46,7 @@ export type Database = {
         Row: {
           id: string;
           name: string;
+          domain: string | null;
           sector: string | null;
           stage: string | null;
           lead_partner_id: string | null;
@@ -56,6 +57,7 @@ export type Database = {
         Insert: {
           id?: string;
           name: string;
+          domain?: string | null;
           sector?: string | null;
           stage?: string | null;
           lead_partner_id?: string | null;
