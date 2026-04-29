@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { currentQuarter, formatQuarter } from "@/lib/quarter";
+import { IntakeUploadZone } from "./intake-upload-zone";
+import { IntakeDetailView } from "./intake-detail-view";
 
 export default async function CompanyDetailPage({
   params,
@@ -9,25 +12,34 @@ export default async function CompanyDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
+  const quarter = currentQuarter();
 
-  const { data: company, error } = await supabase
-    .from("companies")
-    .select(
-      `
-      id,
-      name,
-      sector,
-      stage,
-      status,
-      created_at,
-      updated_at,
-      lead:lead_partner_id ( full_name, email )
-    `,
-    )
-    .eq("id", id)
-    .maybeSingle();
+  const [companyRes, assessmentRes] = await Promise.all([
+    supabase
+      .from("companies")
+      .select(
+        `
+        id,
+        name,
+        sector,
+        stage,
+        status,
+        created_at,
+        updated_at,
+        lead:lead_partner_id ( full_name, email )
+      `,
+      )
+      .eq("id", id)
+      .maybeSingle(),
+    supabase
+      .from("health_assessments")
+      .select("*")
+      .eq("company_id", id)
+      .eq("quarter", quarter)
+      .maybeSingle(),
+  ]);
 
-  if (error) {
+  if (companyRes.error) {
     return (
       <div
         className="rounded-md border p-3 text-sm"
@@ -37,12 +49,25 @@ export default async function CompanyDetailPage({
           color: "#9b2f2f",
         }}
       >
-        Couldn&rsquo;t load the company: {error.message}
+        Couldn&rsquo;t load the company: {companyRes.error.message}
       </div>
     );
   }
 
-  if (!company) notFound();
+  if (!companyRes.data) notFound();
+
+  const company = companyRes.data;
+  const assessment = assessmentRes.data ?? null;
+
+  // For the file card "View PDF" link, the bucket is private — we need a
+  // signed URL valid for an hour. Cheap to regenerate on every page render.
+  let pdfUrl: string | null = null;
+  if (assessment?.uploaded_pdf_path) {
+    const { data: signed } = await supabase.storage
+      .from("assessments")
+      .createSignedUrl(assessment.uploaded_pdf_path, 60 * 60);
+    pdfUrl = signed?.signedUrl ?? null;
+  }
 
   const lead = Array.isArray(company.lead)
     ? (company.lead[0] ?? null)
@@ -76,16 +101,45 @@ export default async function CompanyDetailPage({
         </div>
       </div>
 
-      <div className="apollo-panel p-8">
-        <div className="text-base" style={{ fontWeight: 600 }}>
-          Company workspace
+      <section className="mb-8">
+        <div className="mb-3 flex items-baseline justify-between">
+          <h2 className="text-base" style={{ fontWeight: 600 }}>
+            Intake
+          </h2>
+          <span className="font-label text-xs text-apollo-mute">
+            {formatQuarter(quarter)}
+          </span>
         </div>
-        <p className="mt-2 max-w-xl text-sm text-apollo-mute">
-          The KPI dashboard, workplan calendar, and activity timeline land in
-          later phases (after Orion intake and plan generation are wired up).
-          For now this is a stub so the row click works.
-        </p>
-      </div>
+
+        {assessment ? (
+          <IntakeDetailView
+            assessment={assessment}
+            companyName={company.name}
+            pdfUrl={pdfUrl}
+          />
+        ) : (
+          <IntakeUploadZone
+            companyId={company.id}
+            companyName={company.name}
+            quarter={quarter}
+          />
+        )}
+
+        <div className="mt-6 flex items-center justify-between border-t border-apollo-line-soft pt-6">
+          <div className="text-xs text-apollo-mute">
+            Plan generation comes in Phase 2 &mdash; once the assessment is
+            confirmed.
+          </div>
+          <button
+            type="button"
+            disabled
+            className="apollo-btn disabled:cursor-not-allowed disabled:opacity-50"
+            title="Available in Phase 2 (after assessment is confirmed)"
+          >
+            Generate plan
+          </button>
+        </div>
+      </section>
     </div>
   );
 }
