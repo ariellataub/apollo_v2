@@ -9,6 +9,7 @@ type LeadOption = { id: string; label: string };
 
 type Defaults = {
   name?: string;
+  domain?: string | null;
   sector?: string | null;
   stage?: string | null;
   lead_partner_id?: string | null;
@@ -64,6 +65,23 @@ export function CompanyForm({ action, leadOptions, mode, defaults }: Props) {
           className="apollo-input"
           placeholder="e.g. Tessera Foods"
           defaultValue={defaults?.name ?? ""}
+        />
+      </div>
+
+      <div className="md:col-span-2">
+        <label
+          htmlFor="domain"
+          className="font-label mb-1.5 block text-xs uppercase tracking-wider text-apollo-mute"
+        >
+          Domain
+        </label>
+        <input
+          id="domain"
+          name="domain"
+          type="text"
+          className="apollo-input"
+          placeholder="e.g. acme.com"
+          defaultValue={defaults?.domain ?? ""}
         />
       </div>
 

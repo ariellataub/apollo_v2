@@ -15,7 +15,7 @@ export default async function EditCompanyPage({
   const [companyRes, usersRes] = await Promise.all([
     supabase
       .from("companies")
-      .select("id, name, sector, stage, lead_partner_id, status")
+      .select("id, name, domain, sector, stage, lead_partner_id, status")
       .eq("id", id)
       .maybeSingle(),
     supabase
@@ -77,6 +77,7 @@ export default async function EditCompanyPage({
           leadOptions={leadOptions}
           defaults={{
             name: company.name,
+            domain: company.domain,
             sector: company.sector,
             stage: company.stage,
             lead_partner_id: company.lead_partner_id,

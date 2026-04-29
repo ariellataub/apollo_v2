@@ -13,6 +13,7 @@ export default async function SettingsPage() {
         `
         id,
         name,
+        domain,
         sector,
         stage,
         status,
@@ -70,6 +71,7 @@ export default async function SettingsPage() {
               >
                 <tr>
                   <th className="p-3 text-left">Company</th>
+                  <th className="p-3 text-left">Domain</th>
                   <th className="p-3 text-left">Sector</th>
                   <th className="p-3 text-left">Stage</th>
                   <th className="p-3 text-left">Lead</th>
@@ -97,6 +99,9 @@ export default async function SettingsPage() {
                         >
                           {c.name}
                         </Link>
+                      </td>
+                      <td className="p-3 text-apollo-mute">
+                        {c.domain ?? "—"}
                       </td>
                       <td className="p-3 text-apollo-mute">
                         {c.sector ?? "—"}
