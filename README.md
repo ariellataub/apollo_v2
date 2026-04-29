@@ -8,8 +8,11 @@ This repo is **Phase 0**: auth, the Portfolio dashboard, the Companies admin, an
 
 - **Next.js 16** (App Router, Turbopack) on **Node 20.9+**
 - **React 19** + **Tailwind CSS v4** + **shadcn/ui**
-- **Supabase** — Postgres, Auth, RLS
-- Vercel for hosting
+- **Supabase** — Postgres, Auth, RLS, Storage
+- **Anthropic Claude** (Sonnet 4.6) for PDF extraction
+- Cloudflare for hosting
+
+> **Cloudflare runtime caveat:** server code runs on a V8-based runtime, not Node. Avoid Node-only APIs (`Buffer`, `fs`, `pdf-parse`, etc.) — use Web standards (`Uint8Array`, `btoa`, `fetch`). The Anthropic SDK and `@supabase/ssr` are both Web-API-based and work as-is.
 
 ## Local development
 
@@ -23,12 +26,11 @@ App runs on http://localhost:3000.
 
 ### Required env vars
 
-Both come from Supabase Dashboard → **Project Settings → API**:
-
-| Variable | What it is |
-|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Project URL, e.g. `https://xxxx.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | The publishable / anon key. Safe to expose in browser. |
+| Variable | Source | What it is |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → API | Project URL, e.g. `https://xxxx.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Project Settings → API | Publishable / anon key. Safe to expose in browser. |
+| `ANTHROPIC_API_KEY` | Anthropic Console → Settings → API Keys | Server-side only. Used for PDF assessment extraction. |
 
 > **After changing env vars**, fully stop the dev server (Ctrl+C) and run `npm run dev` again — Turbopack does not always re-read the proxy/middleware module on env hot-reload.
 
@@ -45,38 +47,16 @@ To apply (one-time, when the Supabase project is fresh):
 
 Verify in **Table Editor**: `companies`, `experts`, `pillars`, `users` should exist; `pillars` should have 7 rows.
 
-## Deploying to Vercel
+## Deploying to Cloudflare
 
-### One-time setup
+The Cloudflare project is connected to this GitHub repo and rebuilds on `git push` to `main`. All three env vars (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `ANTHROPIC_API_KEY`) live in the Cloudflare dashboard — no per-deploy config needed.
 
-1. **Push to GitHub.** Create a new repo, then from this folder:
-   ```bash
-   git add -A
-   git commit -m "Phase 0"
-   git remote add origin https://github.com/<you>/<repo>.git
-   git branch -M main
-   git push -u origin main
-   ```
+When adding a new env var:
+1. Cloudflare dashboard → the Workers/Pages project → **Settings → Environment variables** → add for **Production** (and Preview if used).
+2. Trigger a redeploy so the new var is picked up.
 
-2. **Import to Vercel.** vercel.com → **Add New… → Project** → pick the repo. Framework auto-detects as Next.js.
-
-3. **Add the env vars** in the Vercel project setup screen (or later under **Settings → Environment Variables**):
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-   Apply to **Production**, **Preview**, and **Development**.
-
-4. **Deploy.** First build takes a few minutes; after that you'll get a `https://<project>.vercel.app` URL.
-
-5. **Tell Supabase about the production URL.** Supabase Dashboard → **Authentication → URL Configuration**:
-   - **Site URL**: your Vercel URL
-   - **Redirect URLs**: add `https://<project>.vercel.app/**` (and any custom domain you add later)
-
-   This is required even if email confirmation is off — Supabase uses Site URL for password-reset links and any future magic-link flows.
-
-### Subsequent deploys
-
-`git push` to `main` deploys automatically. Pull-request branches get preview deployments at unique URLs.
+When deploying to a new domain:
+- Supabase Dashboard → **Authentication → URL Configuration** → add the domain to **Site URL** and **Redirect URLs** so auth cookies validate. Required even if email confirmation is off (Supabase uses Site URL for password-reset and magic-link flows).
 
 ## Project layout
 

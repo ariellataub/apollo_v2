@@ -202,6 +202,15 @@
   .apollo-chip-priority-Standard { background: #f0eee8; color: #5a554c; }
   .apollo-chip-priority-Light-touch { background: #eaf2ed; color: #1f5d3f; }
 
+  /* Pillar chips — colors mirror wireframe v4's stage- classes */
+  .apollo-chip-pillar-strategy { background: #f9e3e1; color: #9b2f2f; }
+  .apollo-chip-pillar-sales-execution { background: #fbf0df; color: #8c4f1c; }
+  .apollo-chip-pillar-pipeline-generation { background: #eaf2ed; color: #1f5d3f; }
+  .apollo-chip-pillar-people-org { background: #e7eef5; color: #2c5d8f; }
+  .apollo-chip-pillar-operational-infrastructure { background: #ece5f1; color: #5e3f7d; }
+  .apollo-chip-pillar-partnerships-alliances { background: #f0eee8; color: #5a554c; }
+  .apollo-chip-pillar-customer-success { background: #f0eee8; color: #5a554c; }
+
   /* Health pill (1–10 score) */
   .apollo-health-pill {
     width: 30px;
