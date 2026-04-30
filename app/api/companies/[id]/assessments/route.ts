@@ -101,7 +101,22 @@ export async function POST(
 
   // 2. Upload PDF to Storage using the admin client (service role key)
   // so RLS on storage.objects doesn't block server-side writes.
-  const adminSupabase = createSupabaseAdminClient();
+  let adminSupabase;
+  try {
+    adminSupabase = createSupabaseAdminClient();
+  } catch (err) {
+    console.error("[assessments] Admin client init failed:", err);
+    return NextResponse.json(
+      {
+        error:
+          err instanceof Error
+            ? `Server misconfiguration: ${err.message}`
+            : "Server misconfiguration",
+      },
+      { status: 500 },
+    );
+  }
+
   const storagePath = `${companyId}/${quarter}/assessment.pdf`;
   const { error: uploadErr } = await adminSupabase.storage
     .from("assessments")
