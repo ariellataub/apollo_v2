@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { extractAssessment } from "@/lib/anthropic/extract-assessment";
 import { currentQuarter } from "@/lib/quarter";
 
@@ -98,10 +99,11 @@ export async function POST(
     );
   }
 
-  // 2. Upload PDF to Storage (fixed filename so replace just overwrites).
-  // Supabase JS accepts Uint8Array directly — no Buffer needed.
+  // 2. Upload PDF to Storage using the admin client (service role key)
+  // so RLS on storage.objects doesn't block server-side writes.
+  const adminSupabase = createSupabaseAdminClient();
   const storagePath = `${companyId}/${quarter}/assessment.pdf`;
-  const { error: uploadErr } = await supabase.storage
+  const { error: uploadErr } = await adminSupabase.storage
     .from("assessments")
     .upload(storagePath, pdfBytes, {
       contentType: "application/pdf",
