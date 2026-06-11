@@ -1,7 +1,7 @@
 "use client";
 
-import { Fragment, useState, useActionState } from "react";
-import { Edit3, ExternalLink, FileText, Plus, X } from "lucide-react";
+import { Fragment, useState, useActionState, useTransition } from "react";
+import { Edit3, ExternalLink, FileText, Plus, Trash2, X } from "lucide-react";
 import type {
   AssessmentMetric,
   AssessmentPriority,
@@ -12,11 +12,12 @@ import type {
 import { formatQuarter } from "@/lib/quarter";
 import {
   confirmAssessmentAction,
-  replaceAssessmentAction,
+  deleteAssessmentAction,
   revertAssessmentAction,
   updateAssessmentAction,
   type AssessmentActionState,
 } from "./actions";
+import { EditQuarterControl } from "./edit-quarter-control";
 
 const PILLAR_NAMES: Record<PillarSlug, string> = {
   strategy: "Market Strategy",
@@ -47,8 +48,10 @@ const PRIORITY_OPTIONS: AssessmentPriority[] = [
 
 type Props = {
   assessment: HealthAssessment;
+  companyId: string;
   companyName: string;
   pdfUrl: string | null;
+  quarterOptions: string[];
 };
 
 export function IntakeDetailView(props: Props) {
@@ -62,7 +65,7 @@ export function IntakeDetailView(props: Props) {
 // Draft view — editable form with Save / Save & Confirm / Replace
 // =====================================================================
 
-function DraftView({ assessment, pdfUrl }: Props) {
+function DraftView({ assessment, companyId, pdfUrl, quarterOptions }: Props) {
   const [pillarTags, setPillarTags] = useState<PillarFinding[]>(
     assessment.pillar_tags ?? [],
   );
@@ -96,7 +99,12 @@ function DraftView({ assessment, pdfUrl }: Props) {
           {/* Left column */}
           <div className="space-y-4 md:col-span-1">
             <FileCard assessment={assessment} pdfUrl={pdfUrl} />
-            <HealthPriorityCard assessment={assessment} mode="edit" />
+            <HealthPriorityCard
+              assessment={assessment}
+              companyId={companyId}
+              quarterOptions={quarterOptions}
+              mode="edit"
+            />
           </div>
 
           {/* Right column — narratives */}
@@ -168,6 +176,7 @@ function DraftView({ assessment, pdfUrl }: Props) {
             <span className="font-label">Draft &middot; not yet confirmed</span>
           </div>
           <div className="flex flex-wrap gap-2">
+            <DeleteForm assessmentId={assessment.id} />
             <ReplaceForm assessmentId={assessment.id} />
             <button
               type="submit"
@@ -198,13 +207,18 @@ function DraftView({ assessment, pdfUrl }: Props) {
 // Confirmed view — read-only, with Edit button
 // =====================================================================
 
-function ConfirmedView({ assessment, pdfUrl }: Props) {
+function ConfirmedView({ assessment, companyId, pdfUrl, quarterOptions }: Props) {
   return (
     <>
       <div className="mb-6 grid gap-6 md:grid-cols-3">
         <div className="space-y-4 md:col-span-1">
           <FileCard assessment={assessment} pdfUrl={pdfUrl} />
-          <HealthPriorityCard assessment={assessment} mode="view" />
+          <HealthPriorityCard
+            assessment={assessment}
+            companyId={companyId}
+            quarterOptions={quarterOptions}
+            mode="view"
+          />
         </div>
 
         <div className="space-y-4 md:col-span-2">
@@ -250,6 +264,7 @@ function ConfirmedView({ assessment, pdfUrl }: Props) {
           </span>
         </div>
         <div className="flex flex-wrap gap-2">
+          <DeleteForm assessmentId={assessment.id} />
           <ReplaceForm assessmentId={assessment.id} />
           <RevertForm assessmentId={assessment.id} />
         </div>
@@ -303,14 +318,28 @@ function FileCard({
 
 function HealthPriorityCard({
   assessment,
+  companyId,
+  quarterOptions,
   mode,
 }: {
   assessment: HealthAssessment;
+  companyId: string;
+  quarterOptions: string[];
   mode: "edit" | "view";
 }) {
   return (
     <div className="apollo-panel p-4">
       <div className="font-label mb-3 text-[10px] uppercase tracking-wider text-apollo-mute">
+        Quarter
+      </div>
+      <EditQuarterControl
+        assessmentId={assessment.id}
+        companyId={companyId}
+        currentQuarter={assessment.quarter}
+        quarterOptions={quarterOptions}
+      />
+
+      <div className="font-label mt-5 mb-3 text-[10px] uppercase tracking-wider text-apollo-mute">
         Health
       </div>
       {mode === "edit" ? (
@@ -673,20 +702,94 @@ function formatMetricValue(v: number | null | undefined): string {
 }
 
 // ---------------------------------------------------------------------
-// Replace / Revert forms — small standalone forms with bound actions
+// Replace / Revert / Delete forms — small standalone forms with bound actions
 // ---------------------------------------------------------------------
 
 function ReplaceForm({ assessmentId }: { assessmentId: string }) {
+  // Plain button + useTransition, not <form action={...}> — in DraftView this
+  // component is rendered inside the outer save/confirm <form>, and the
+  // browser flattens the nested form, redirecting the submit to the wrong
+  // action.
+  const [isPending, startTransition] = useTransition();
   return (
-    <form action={replaceAssessmentAction.bind(null, assessmentId)}>
-      <button
-        type="submit"
-        className="apollo-btn-ghost"
-        title="Delete this assessment and return to the upload state"
+    <button
+      type="button"
+      disabled={isPending}
+      onClick={() =>
+        startTransition(async () => {
+          try {
+            await deleteAssessmentAction(assessmentId);
+          } catch (err) {
+            console.error("Replace (delete) failed:", err);
+          }
+        })
+      }
+      className="apollo-btn-ghost disabled:cursor-not-allowed disabled:opacity-60"
+      title="Delete this assessment and return to the upload state"
+    >
+      {isPending ? "Removing…" : "Replace PDF"}
+    </button>
+  );
+}
+
+function DeleteForm({ assessmentId }: { assessmentId: string }) {
+  const [confirming, setConfirming] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  if (confirming) {
+    return (
+      <div
+        className="inline-flex items-center gap-2 rounded-md border p-1.5 pl-3"
+        style={{ borderColor: "#ecc4c0", background: "#fdf3f1" }}
       >
-        Replace PDF
-      </button>
-    </form>
+        <span className="text-xs" style={{ color: "#9b2f2f", fontWeight: 600 }}>
+          Delete this assessment?
+        </span>
+        <button
+          type="button"
+          onClick={() => setConfirming(false)}
+          disabled={isPending}
+          className="apollo-btn-ghost"
+          style={{ padding: "4px 10px", fontSize: 12 }}
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          disabled={isPending}
+          onClick={() =>
+            startTransition(async () => {
+              try {
+                await deleteAssessmentAction(assessmentId);
+              } catch (err) {
+                console.error("Delete failed:", err);
+              }
+            })
+          }
+          className="apollo-btn"
+          style={{
+            padding: "4px 10px",
+            fontSize: 12,
+            background: "#9b2f2f",
+            borderColor: "#9b2f2f",
+          }}
+        >
+          {isPending ? "Deleting…" : "Yes, delete"}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setConfirming(true)}
+      className="apollo-btn-ghost"
+      style={{ color: "#9b2f2f" }}
+      title="Permanently delete this assessment and its PDF"
+    >
+      <Trash2 size={13} /> Delete
+    </button>
   );
 }
 

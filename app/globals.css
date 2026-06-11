@@ -202,6 +202,23 @@
   .apollo-chip-priority-Standard { background: #f0eee8; color: #5a554c; }
   .apollo-chip-priority-Light-touch { background: #eaf2ed; color: #1f5d3f; }
 
+  /* Quarter chip — neutral warm tone, used to mark the assessment's period */
+  .apollo-chip-quarter {
+    background: var(--apollo-panel2);
+    color: var(--apollo-ink-soft);
+    border: 1px solid var(--apollo-line);
+    font-weight: 600;
+  }
+
+  /* Pipeline stage chip — one per stage of the five-stage pipeline */
+  .apollo-chip-stage-intake { background: #f0eee8; color: #5a554c; }
+  .apollo-chip-stage-plan { background: #eaf2ed; color: #1f5d3f; }
+  .apollo-chip-stage-review { background: #fbf0df; color: #8c4f1c; }
+  .apollo-chip-stage-executing { background: var(--apollo-accent); color: #fff; }
+  .apollo-chip-stage-closed { background: #f0eee8; color: #777067; }
+  .apollo-chip-stage-clickable { cursor: pointer; text-decoration: none; transition: filter 0.15s; }
+  .apollo-chip-stage-clickable:hover { filter: brightness(0.94); }
+
   /* Pillar chips — colors mirror wireframe v4's stage- classes */
   .apollo-chip-pillar-strategy { background: #f9e3e1; color: #9b2f2f; }
   .apollo-chip-pillar-sales-execution { background: #fbf0df; color: #8c4f1c; }
@@ -306,5 +323,157 @@
   .apollo-input:focus {
     outline: none;
     border-color: var(--apollo-accent);
+  }
+
+  /* ============ Execute view — KPI dashboard ============ */
+  .apollo-kpi-card {
+    border: 1px solid var(--apollo-line-soft);
+    border-radius: 6px;
+    padding: 14px 16px;
+    background: #fff;
+  }
+  .apollo-kpi-label {
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    color: var(--apollo-mute);
+    font-weight: 600;
+  }
+  .apollo-kpi-value {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .apollo-kpi-delta {
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    color: var(--apollo-mute);
+  }
+  .apollo-kpi-delta-good { color: var(--apollo-accent); }
+  .apollo-kpi-delta-bad  { color: var(--apollo-bad); }
+  .apollo-kpi-delta-flat { color: var(--apollo-mute); }
+  .apollo-kpi-foot {
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    color: var(--apollo-mute);
+    letter-spacing: 0.3px;
+  }
+  .apollo-kpi-chart svg { width: 100%; height: auto; display: block; }
+  .apollo-kpi-chart .target { stroke: #1f5d3f; stroke-width: 1.2; stroke-dasharray: 5 4; }
+  .apollo-kpi-chart .actual { stroke: #1f5d3f; stroke-width: 2; fill: none; }
+  .apollo-kpi-chart .actual-pt { fill: #1f5d3f; }
+
+  /* ============ Execute view — Overdue panel ============ */
+  .apollo-overdue-box {
+    border: 1px solid #ecc4c0;
+    background: #fdf3f1;
+    border-radius: 6px;
+    padding: 16px;
+  }
+
+  /* ============ Execute view — Workplan calendar ============ */
+  .apollo-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--apollo-line);
+    border: 1px solid var(--apollo-line);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .apollo-cal-day-head {
+    background: var(--apollo-panel2);
+    padding: 6px 8px;
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    letter-spacing: 0.8px;
+    color: var(--apollo-mute);
+    text-transform: uppercase;
+  }
+  .apollo-cal-cell {
+    background: var(--apollo-panel);
+    padding: 6px 7px;
+    min-height: 96px;
+  }
+  .apollo-cal-cell-faded { background: #fbfaf6; }
+  .apollo-cal-cell-faded .apollo-cal-day-num { opacity: 0.35; }
+  .apollo-cal-cell-current-week { background: #fffdf5; }
+  .apollo-cal-cell-today .apollo-cal-day-num {
+    background: var(--apollo-accent);
+    color: #fff;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .apollo-cal-day-num {
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    color: var(--apollo-mute);
+    display: inline-block;
+  }
+  .apollo-cal-item {
+    font-size: 11.5px;
+    padding: 3px 6px;
+    border-radius: 3px;
+    margin-top: 4px;
+    cursor: pointer;
+    line-height: 1.3;
+    border: 1px solid transparent;
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-family: var(--font-serif);
+  }
+  .apollo-cal-item:hover { filter: brightness(0.97); }
+  .apollo-cal-item-overdue     { background: #f9e3e1; color: #7d1f1f; border-color: #ecc4c0; }
+  .apollo-cal-item-in-progress { background: #e7eef5; color: #2c5d8f; border-color: #ccd9e8; }
+  .apollo-cal-item-not-started { background: #f3efe6; color: #5a554c; border-color: #e6e0d2; }
+  .apollo-cal-item-blocked     { background: #fbf0df; color: #8c4f1c; border-color: #ead4a8; }
+  .apollo-cal-item-done {
+    background: #eaf2ed;
+    color: #1f5d3f;
+    opacity: 0.65;
+    text-decoration: line-through;
+    border-color: #d6e6dc;
+  }
+
+  /* ============ Execute view — Action item modal ============ */
+  .apollo-modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 15, 12, 0.45);
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .apollo-modal {
+    background: var(--apollo-panel);
+    border-radius: 8px;
+    max-width: 620px;
+    width: 92%;
+    max-height: 88vh;
+    overflow: auto;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+    border: 1px solid var(--apollo-line);
+  }
+  .apollo-timeline-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--apollo-mute);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .apollo-timeline-dot-created { background: var(--apollo-accent); }
+  .apollo-timeline-dot-system  { background: var(--apollo-warn); }
+  .apollo-timeline-dot-comment { background: var(--apollo-ink-soft); }
+  .apollo-timeline-line {
+    width: 1px;
+    flex: 1;
+    background: var(--apollo-line);
+    margin: 4px 0 4px 3.5px;
   }
 }

@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Apollo — Wireframes v4</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --panel: #ffffff;
+    --panel2: #f6f4ef;
+    --line: #e6e2da;
+    --line-soft: #efeae0;
+    --ink: #1a1a1a;
+    --ink-soft: #444;
+    --mute: #777067;
+    --accent: #1f5d3f;
+    --accent2: #2c5d8f;
+    --warn: #a35a1c;
+    --bad: #9b2f2f;
+  }
+  * { font-family: Georgia, "Times New Roman", "Iowan Old Style", serif; }
+  body { background: var(--bg); color: var(--ink); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+  .panel2 { background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; }
+  .chip { padding: 1px 9px; border-radius: 999px; font-size: 11.5px; display: inline-flex; align-items: center; gap: 5px; }
+  .nav-item { display: flex; gap: 10px; align-items: center; padding: 8px 12px; border-radius: 4px; color: var(--mute); cursor: pointer; font-size: 14.5px; }
+  .nav-item:hover, .nav-item.active { color: var(--ink); background: var(--panel2); }
+  .nav-item.active { position: relative; }
+  .nav-item.active::before { content: ""; position: absolute; left: -12px; top: 8px; bottom: 8px; width: 2px; background: var(--accent); border-radius: 1px; }
+  .row:hover { background: #f9f7f1; cursor: pointer; }
+  .row td { font-size: 14px; }
+  .health-pill { width: 30px; height: 22px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12.5px; }
+  .h-9, .h-10 { background: #e7f1ea; color: #1f5d3f; }
+  .h-7, .h-8 { background: #e7eef5; color: #2c5d8f; }
+  .h-5, .h-6 { background: #fbf0df; color: #8c4f1c; }
+  .h-3, .h-4 { background: #f9e3e1; color: #9b2f2f; }
+  .h-1, .h-2 { background: #f3cdc9; color: #7d1f1f; }
+  .priority-Critical { background: #f9e3e1; color: #9b2f2f; }
+  .priority-High { background: #fbf0df; color: #8c4f1c; }
+  .priority-Standard { background: #f0eee8; color: #5a554c; }
+  .priority-Light-touch { background: #eaf2ed; color: #1f5d3f; }
+  .stage-Execute { background: #e7f1ea; color: #1f5d3f; }
+  .stage-SalesExec { background: #fbf0df; color: #8c4f1c; }
+  .stage-People { background: #e7eef5; color: #2c5d8f; }
+  .stage-Strategy { background: #f9e3e1; color: #9b2f2f; }
+  .stage-Pipeline { background: #eaf2ed; color: #1f5d3f; }
+  .stage-Ops { background: #ece5f1; color: #5e3f7d; }
+  .stage-CS { background: #f0eee8; color: #5a554c; }
+  .stage-Partnerships { background: #f0eee8; color: #5a554c; }
+  .input { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; color: var(--ink); font-size: 14px; width: 100%; }
+  .input:focus { outline: none; border-color: var(--accent); }
+  .btn { background: var(--accent); color: #fff; padding: 8px 16px; border-radius: 4px; font-size: 14px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; border: 1px solid var(--accent); }
+  .btn:hover { background: #19503a; }
+  .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); padding: 8px 14px; border-radius: 4px; font-size: 14px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+  .btn-ghost:hover { background: var(--panel2); border-color: #d4cfc4; }
+  .progress-bar { height: 4px; background: #efeae0; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); }
+  .pillar-card { padding: 16px; border-radius: 6px; cursor: pointer; transition: background .15s, border-color .15s; background: var(--panel); border: 1px solid var(--line);}
+  .pillar-card:hover { background: #fffefb; border-color: var(--accent); }
+  .pillar-card .num { font-size: 10px; letter-spacing: 1px; color: var(--mute); text-transform: uppercase; font-family: ui-sans-serif, sans-serif; font-weight: 600;}
+  .screen { display: none; }
+  .screen.active { display: block; }
+  details > summary { cursor: pointer; list-style: none; }
+  details > summary::-webkit-details-marker { display: none; }
+  .obj-card { border: 1px solid var(--line); border-radius: 6px; background: var(--panel); padding: 16px; }
+  .label, .uppercase-label { font-family: ui-sans-serif, system-ui, sans-serif; letter-spacing: .5px; }
+  thead th { font-family: ui-sans-serif, sans-serif; font-weight: 600; font-size: 10.5px; letter-spacing: .8px; color: var(--mute); text-transform: uppercase; }
+  .brand-A { width: 28px; height: 28px; border-radius: 4px; background: var(--accent); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-family: Georgia, serif; font-size: 16px; font-weight: 700; font-style: italic; }
+
+  /* KPI dashboard */
+  .kpi-card { border: 1px solid var(--line-soft); border-radius: 6px; padding: 14px 16px; background: #fff; }
+  .kpi-card .kpi-label { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 10.5px; letter-spacing: .9px; text-transform: uppercase; color: var(--mute); font-weight: 600; }
+  .kpi-card .big-value { font-family: Georgia, serif; font-size: 28px; font-weight: 600; line-height: 1; letter-spacing: -.5px; }
+  .kpi-card .delta { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 11.5px; color: var(--mute); }
+  .kpi-card .delta.good { color: var(--accent); }
+  .kpi-card .delta.bad { color: var(--bad); }
+  .kpi-card .delta.flat { color: var(--mute); }
+  .kpi-card .kpi-foot { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 10.5px; color: var(--mute); letter-spacing: .3px; }
+  .kpi-chart svg { width: 100%; height: auto; display: block; }
+  .kpi-chart .target { stroke: #1f5d3f; stroke-width: 1.2; stroke-dasharray: 5 4; }
+  .kpi-chart .actual { stroke: #1f5d3f; stroke-width: 2; fill: none; }
+  .kpi-chart .actual-pt { fill: #1f5d3f; }
+  .kpi-chart .axis-label { font-family: ui-sans-serif, sans-serif; font-size: 11px; fill: var(--mute); }
+  .kpi-chart .level-label { font-family: ui-sans-serif, sans-serif; font-size: 11px; fill: var(--mute); }
+
+  /* Calendar */
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .cal-day-head { background: var(--panel2); padding: 6px 8px; font-family: ui-sans-serif, sans-serif; font-size: 10.5px; letter-spacing: .8px; color: var(--mute); text-transform: uppercase; }
+  .cal-cell { background: var(--panel); padding: 6px 7px; min-height: 96px; cursor: default; }
+  .cal-cell.faded { background: #fbfaf6; }
+  .cal-cell.faded .day-num { opacity: .35; }
+  .cal-cell.current-week { background: #fffdf5; }
+  .cal-cell.today .day-num { background: var(--accent); color: #fff; padding: 1px 5px; border-radius: 3px;}
+  .day-num { font-family: ui-sans-serif, sans-serif; font-size: 11.5px; color: var(--mute); display: inline-block;}
+  .cal-item { font-size: 11.5px; padding: 3px 6px; border-radius: 3px; margin-top: 4px; cursor: pointer; line-height: 1.3; border: 1px solid transparent; }
+  .cal-item:hover { filter: brightness(0.97); }
+  .cal-item.overdue { background: #f9e3e1; color: #7d1f1f; border-color: #ecc4c0; }
+  .cal-item.in-progress { background: #e7eef5; color: #2c5d8f; border-color: #ccd9e8; }
+  .cal-item.not-started { background: #f3efe6; color: #5a554c; border-color: #e6e0d2; }
+  .cal-item.done { background: #eaf2ed; color: #1f5d3f; opacity: .65; text-decoration: line-through; border-color: #d6e6dc; }
+
+  /* Modal */
+  .modal-bg { position: fixed; inset: 0; background: rgba(15,15,12,.45); display: none; z-index: 80; align-items: center; justify-content: center; }
+  .modal-bg.active { display: flex; }
+  .modal { background: var(--panel); border-radius: 8px; max-width: 620px; width: 92%; max-height: 88vh; overflow: auto; box-shadow: 0 16px 48px rgba(0,0,0,.18); border: 1px solid var(--line);}
+  .timeline-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mute); margin-top: 6px; flex-shrink: 0;}
+  .timeline-dot.created { background: var(--accent); }
+  .timeline-dot.slack { background: var(--accent2); }
+  .timeline-dot.due { background: var(--warn); }
+  .timeline-dot.alert { background: var(--bad); }
+  .timeline-dot.comment { background: var(--ink-soft); }
+  .timeline-line { width: 1px; flex: 1; background: var(--line); margin: 4px 0 4px 3.5px; }
+
+  /* Overdue box */
+  .overdue-box { border: 1px solid #ecc4c0; background: #fdf3f1; border-radius: 6px; padding: 16px; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div class="border-b border-[var(--line)] px-6 py-3 flex items-center gap-4 bg-[var(--panel)]">
+  <div class="flex items-center gap-3">
+    <div class="brand-A">A</div>
+    <div class="text-lg" style="font-weight:600;letter-spacing:.3px;">Apollo</div>
+  </div>
+  <div class="flex-1"></div>
+  <div class="text-xs text-[var(--mute)] label">Q2 · 2026</div>
+  <div style="width:30px;height:30px;border-radius:50%;background:#efeae0;color:var(--ink-soft);display:inline-flex;align-items:center;justify-content:center;font-size:12px;">AT</div>
+</div>
+
+<div class="flex">
+
+  <div class="w-52 shrink-0 border-r border-[var(--line)] p-4 min-h-[calc(100vh-53px)] bg-[var(--panel)]">
+    <div class="text-[10px] uppercase tracking-wider text-[var(--mute)] px-2 py-2 label">Workspace</div>
+    <div class="nav-item active" data-screen="portfolio"><i data-lucide="layout-grid" style="width:15px;height:15px"></i> Portfolio</div>
+    <div class="nav-item" data-screen="playbooks"><i data-lucide="book-open" style="width:15px;height:15px"></i> Playbooks</div>
+    <div class="nav-item" data-screen="experts"><i data-lucide="users" style="width:15px;height:15px"></i> Experts</div>
+    <div class="nav-item" data-screen="settings"><i data-lucide="settings" style="width:15px;height:15px"></i> Settings</div>
+  </div>
+
+  <div class="flex-1 px-10 py-8 max-w-[1300px]">
+
+    <!-- ============ PORTFOLIO ============ -->
+    <div class="screen active" id="screen-portfolio">
+      <h1 class="text-3xl mb-8" style="font-weight:600;letter-spacing:-.2px;">Greenfield Portfolio · Q2&rsquo;26</h1>
+      <div class="panel overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-[var(--panel2)]" style="border-bottom:1px solid var(--line);">
+            <tr>
+              <th class="text-left p-3">Company</th>
+              <th class="text-left p-3">Health</th>
+              <th class="text-left p-3">Priority</th>
+              <th class="text-left p-3">Lead</th>
+              <th class="text-left p-3">Plan progress</th>
+              <th class="text-left p-3">KPIs on track</th>
+              <th class="text-left p-3">Last update</th>
+            </tr>
+          </thead>
+          <tbody id="portfolio-rows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============ COMPANY ============ -->
+    <div class="screen" id="screen-company">
+      <div class="flex items-center gap-2 text-xs text-[var(--mute)] mb-4 label">
+        <span class="cursor-pointer hover:text-[var(--ink)]" data-screen="portfolio">Portfolio</span> <span>›</span>
+        <span class="text-[var(--ink)]">Tessera Foods</span>
+      </div>
+
+      <div class="flex items-start justify-between mb-8">
+        <div>
+          <h2 class="text-2xl mb-3" style="font-weight:600;">Tessera Foods</h2>
+          <div class="flex gap-2 items-center">
+            <span class="health-pill h-4">4</span>
+            <span class="chip priority-Critical">Critical</span>
+            <span class="chip stage-Execute">Executing</span>
+            <span class="text-xs text-[var(--mute)] ml-1">Plan approved Apr 18 · 9 weeks remaining</span>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn-ghost"><i data-lucide="upload" style="width:14px;height:14px"></i> Import Orion PDF</button>
+          <button class="btn-ghost"><i data-lucide="message-square" style="width:14px;height:14px"></i> #tessera-foods</button>
+        </div>
+      </div>
+
+      <!-- Full-width KPI dashboard -->
+      <div class="panel p-6 mb-8">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <div class="text-base" style="font-weight:600;">KPI Dashboard</div>
+            <div class="text-xs text-[var(--mute)] mt-1">Monthly readings via automated email round-trip · April reading received Apr 22</div>
+          </div>
+          <button class="btn-ghost"><i data-lucide="mail" style="width:14px;height:14px"></i> Send KPI request now</button>
+        </div>
+        <div id="kpi-grid" class="grid grid-cols-2 gap-3"></div>
+      </div>
+
+      <!-- Overdue callout (only thing flagged separately) -->
+      <div class="overdue-box mb-8" id="overdue-box">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <i data-lucide="alert-triangle" style="width:16px;height:16px;color:var(--bad)"></i>
+            <div style="font-weight:600;color:var(--bad);">Overdue</div>
+            <span class="text-xs text-[var(--mute)] label" id="overdue-count"></span>
+          </div>
+        </div>
+        <div id="overdue-list" class="grid grid-cols-2 gap-3"></div>
+      </div>
+
+      <!-- Workplan calendar -->
+      <div class="panel p-6">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <div class="text-base" style="font-weight:600;">Workplan</div>
+            <div class="text-xs text-[var(--mute)] mt-1">Click any item to view its activity. Current week highlighted.</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="btn-ghost" id="cal-prev" title="Previous month"><i data-lucide="chevron-left" style="width:14px;height:14px"></i></button>
+            <div id="cal-month-label" class="text-base mx-2" style="font-weight:600; min-width: 130px; text-align:center;"></div>
+            <button class="btn-ghost" id="cal-next" title="Next month"><i data-lucide="chevron-right" style="width:14px;height:14px"></i></button>
+            <button class="btn-ghost ml-2 text-xs" id="cal-today">Today</button>
+          </div>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="flex gap-3 mt-4 text-xs text-[var(--mute)] label flex-wrap">
+          <span class="flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f9e3e1;"></span> Overdue</span>
+          <span class="flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#e7eef5;"></span> In progress</span>
+          <span class="flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f3efe6;"></span> Not started</span>
+          <span class="flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#eaf2ed;"></span> Done</span>
+          <div class="flex-1"></div>
+          <span>Today: Sun 26 Apr 2026</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============ PLAYBOOKS ============ -->
+    <div class="screen" id="screen-playbooks">
+      <div class="flex items-end justify-between mb-6">
+        <h1 class="text-3xl" style="font-weight:600;letter-spacing:-.2px;">Playbooks</h1>
+        <div class="flex gap-2">
+          <button class="btn-ghost"><i data-lucide="upload" style="width:14px;height:14px"></i> Upload narrative</button>
+          <button class="btn"><i data-lucide="wand-sparkles" style="width:14px;height:14px"></i> Author with AI</button>
+        </div>
+      </div>
+      <div class="grid grid-cols-7 gap-2 mb-8">
+        <div class="pillar-card"><div class="num">Pillar 1</div><div class="text-base mt-2" style="font-weight:600;">Strategy</div><div class="text-xs text-[var(--mute)] mt-2">7 playbooks</div></div>
+        <div class="pillar-card"><div class="num">Pillar 2</div><div class="text-base mt-2" style="font-weight:600;">Sales Execution</div><div class="text-xs text-[var(--accent)] mt-2">9 playbooks</div></div>
+        <div class="pillar-card"><div class="num">Pillar 3</div><div class="text-base mt-2" style="font-weight:600;">Pipeline Generation</div><div class="text-xs text-[var(--mute)] mt-2">6 playbooks</div></div>
+        <div class="pillar-card"><div class="num">Pillar 4</div><div class="text-base mt-2" style="font-weight:600;">People &amp; Org</div><div class="text-xs text-[var(--mute)] mt-2">8 playbooks</div></div>
+        <div class="pillar-card"><div class="num">Pillar 5</div><div class="text-base mt-2" style="font-weight:600;">Operational Infra</div><div class="text-xs text-[var(--warn)] mt-2">4 playbooks · thin</div></div>
+        <div class="pillar-card"><div class="num">Pillar 6</div><div class="text-base mt-2" style="font-weight:600;">Partnerships</div><div class="text-xs text-[var(--bad)] mt-2">2 playbooks · gap</div></div>
+        <div class="pillar-card"><div class="num">Pillar 7</div><div class="text-base mt-2" style="font-weight:600;">Customer Success</div><div class="text-xs text-[var(--mute)] mt-2">6 playbooks</div></div>
+      </div>
+      <div class="grid grid-cols-3 gap-6">
+        <div class="col-span-2 panel p-6">
+          <div class="flex justify-between mb-4">
+            <div class="text-sm" style="font-weight:600;">Sales Execution playbooks</div>
+            <input class="input" style="width:200px" placeholder="Search…" />
+          </div>
+          <div class="space-y-2">
+            <div class="panel2 p-4 cursor-pointer">
+              <div class="flex justify-between items-baseline">
+                <div style="font-weight:600;">PB-12 · DTC → retail expansion</div>
+                <div class="text-xs text-[var(--mute)] label">v3 · used 7×</div>
+              </div>
+              <div class="text-sm text-[var(--mute)] mt-1">When a DTC brand needs to land grocery / specialty retail. Covers broker network, sell sheet, buyer call cadence, and shelf-set planning.</div>
+            </div>
+            <div class="panel2 p-4 cursor-pointer">
+              <div class="flex justify-between items-baseline"><div style="font-weight:600;">PB-04 · CRM hygiene &amp; pipeline discipline</div><div class="text-xs text-[var(--mute)] label">v2 · used 12×</div></div>
+              <div class="text-sm text-[var(--mute)] mt-1">Stage definitions, pipeline coverage targets, hygiene rituals, weekly forecasting cadence.</div>
+            </div>
+            <div class="panel2 p-4 cursor-pointer">
+              <div class="flex justify-between items-baseline"><div style="font-weight:600;">PB-09 · Outbound SDR motion (sub-$5M ARR)</div><div class="text-xs text-[var(--mute)] label">v1 · used 4×</div></div>
+              <div class="text-sm text-[var(--mute)] mt-1">Stand up first SDR team, ICP definition, sequencing tools, comp plan.</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel p-6">
+          <div class="text-sm mb-3" style="font-weight:600;">Improvement queue</div>
+          <div class="text-xs text-[var(--mute)] mb-3">Surfaced from operator edits + closeout reports.</div>
+          <div class="space-y-3">
+            <div class="panel2 p-3">
+              <div class="text-sm"><b>PB-08</b> · CRO search</div>
+              <div class="text-xs text-[var(--mute)] mt-1">3 closeouts suggest time-to-shortlist 30d → 45d for sub-$50M brands.</div>
+              <div class="flex gap-2 mt-2">
+                <button class="btn text-xs" style="padding:3px 10px;">Apply</button>
+                <button class="btn-ghost text-xs" style="padding:3px 10px;">Edit manually</button>
+              </div>
+            </div>
+            <div class="panel2 p-3" style="border-color:#e6c5b8">
+              <div class="text-sm">Gap detected</div>
+              <div class="text-xs text-[var(--mute)] mt-1">&ldquo;Amazon UE turnaround&rdquo; — surfaced 2× this Q, no playbook exists.</div>
+              <button class="btn text-xs mt-2" style="padding:3px 10px;">Author with AI</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ EXPERTS ============ -->
+    <div class="screen" id="screen-experts">
+      <div class="flex items-end justify-between mb-6">
+        <h1 class="text-3xl" style="font-weight:600;letter-spacing:-.2px;">Experts</h1>
+        <button class="btn"><i data-lucide="user-plus" style="width:14px;height:14px"></i> Add expert</button>
+      </div>
+      <div class="flex gap-2 mb-5 flex-wrap">
+        <input class="input" style="width:240px" placeholder="Search by name, expertise…" />
+        <select class="input" style="width:auto"><option>All Pillars</option></select>
+        <select class="input" style="width:auto"><option>Any sector</option></select>
+        <select class="input" style="width:auto"><option>Any stage</option></select>
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="panel p-5">
+          <div class="flex items-start gap-3">
+            <div style="width:44px;height:44px;border-radius:50%;background:#e6dccd;color:#574a32;display:flex;align-items:center;justify-content:center;font-size:14px;">JM</div>
+            <div class="flex-1"><div style="font-weight:600;">Janet Morales</div><div class="text-xs text-[var(--mute)]">Fmr SVP Sales · Annie&rsquo;s Homegrown</div></div>
+          </div>
+          <div class="mt-3 text-sm text-[var(--mute)]">DTC → retail expansion · grocery brokers · buyer-call coaching.</div>
+          <div class="flex gap-1 mt-3 flex-wrap">
+            <span class="chip stage-SalesExec">Sales Execution</span>
+            <span class="chip priority-Standard">CPG</span>
+          </div>
+          <div class="text-xs text-[var(--accent)] mt-3">● Available · Advisory + Project</div>
+        </div>
+        <div class="panel p-5">
+          <div class="flex items-start gap-3">
+            <div style="width:44px;height:44px;border-radius:50%;background:#dde6da;color:#3d4f3a;display:flex;align-items:center;justify-content:center;font-size:14px;">DT</div>
+            <div class="flex-1"><div style="font-weight:600;">Derek Tran</div><div class="text-xs text-[var(--mute)]">Founder · Tran Consumer Brokers</div></div>
+          </div>
+          <div class="mt-3 text-sm text-[var(--mute)]">Mid-Atlantic + Southeast grocery broker network · co-mfg sourcing.</div>
+          <div class="flex gap-1 mt-3 flex-wrap">
+            <span class="chip stage-Pipeline">Pipeline Generation</span>
+            <span class="chip priority-Standard">CPG</span>
+          </div>
+          <div class="text-xs text-[var(--warn)] mt-3">◐ Limited capacity</div>
+        </div>
+        <div class="panel p-5">
+          <div class="flex items-start gap-3">
+            <div style="width:44px;height:44px;border-radius:50%;background:#e6dde2;color:#5a3f4f;display:flex;align-items:center;justify-content:center;font-size:14px;">AR</div>
+            <div class="flex-1"><div style="font-weight:600;">Alicia Rao</div><div class="text-xs text-[var(--mute)]">Fractional CFO · ex-Chime, ex-Plaid</div></div>
+          </div>
+          <div class="mt-3 text-sm text-[var(--mute)]">Cash modeling · burn multiple optimization · board reporting.</div>
+          <div class="flex gap-1 mt-3 flex-wrap">
+            <span class="chip stage-Strategy">Strategy</span>
+            <span class="chip priority-Standard">Fintech</span>
+          </div>
+          <div class="text-xs text-[var(--accent)] mt-3">● Available · Fractional</div>
+        </div>
+        <div class="panel p-5">
+          <div class="flex items-start gap-3">
+            <div style="width:44px;height:44px;border-radius:50%;background:#e6dccd;color:#574a32;display:flex;align-items:center;justify-content:center;font-size:14px;">MN</div>
+            <div class="flex-1"><div style="font-weight:600;">Marcus Nye</div><div class="text-xs text-[var(--mute)]">Talent partner · True Search</div></div>
+          </div>
+          <div class="mt-3 text-sm text-[var(--mute)]">CRO / CFO / CPO searches · DTC + early enterprise.</div>
+          <div class="flex gap-1 mt-3 flex-wrap"><span class="chip stage-People">People &amp; Org</span></div>
+          <div class="text-xs text-[var(--accent)] mt-3">● Available · Project</div>
+        </div>
+        <div class="panel p-5" style="opacity:.7;border-style:dashed;">
+          <div class="flex items-start gap-3">
+            <div style="width:44px;height:44px;border-radius:50%;background:#f0eee8;color:#777067;display:flex;align-items:center;justify-content:center;font-size:18px;">+</div>
+            <div class="flex-1"><div style="font-weight:600;">Add expert</div><div class="text-xs text-[var(--mute)]">Upload roster CSV or add individually.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SETTINGS ============ -->
+    <div class="screen" id="screen-settings">
+      <h1 class="text-3xl mb-2" style="font-weight:600;letter-spacing:-.2px;">Settings</h1>
+      <div class="text-sm text-[var(--mute)] mb-6">Integrations · roster · plan-depth profiles · KPI request templates.</div>
+      <div class="grid grid-cols-2 gap-5">
+        <div class="panel p-5">
+          <div class="flex items-center gap-2 mb-3"><i data-lucide="file-text" style="width:18px;height:18px;color:var(--accent2)"></i><div style="font-weight:600;">Orion intake</div><span class="chip stage-Execute" style="margin-left:auto;font-size:10px;">Connected</span></div>
+          <div class="text-sm text-[var(--mute)]">Drop-zone for Orion PDFs. Once Orion exposes an API, switch to direct ingest.</div>
+        </div>
+        <div class="panel p-5">
+          <div class="flex items-center gap-2 mb-3"><i data-lucide="hash" style="width:18px;height:18px;color:var(--accent2)"></i><div style="font-weight:600;">Slack</div><span class="chip stage-Execute" style="margin-left:auto;font-size:10px;">Connected</span></div>
+          <div class="text-sm text-[var(--mute)]">Workspace: greenfield-growth · per-company channels enabled · weekly nudge: Mon 9am local.</div>
+        </div>
+        <div class="panel p-5">
+          <div class="flex items-center gap-2 mb-3"><i data-lucide="mail" style="width:18px;height:18px;color:var(--accent2)"></i><div style="font-weight:600;">KPI email round-trip</div><span class="chip stage-Execute" style="margin-left:auto;font-size:10px;">Active</span></div>
+          <div class="text-sm text-[var(--mute)]">Inbound parser: Postmark · From: kpi@apollo.greenfield-growth.com · Cadence: 1st of month.</div>
+        </div>
+        <div class="panel p-5">
+          <div class="flex items-center gap-2 mb-3"><i data-lucide="sliders" style="width:18px;height:18px;color:var(--accent2)"></i><div style="font-weight:600;">Plan-depth profiles</div></div>
+          <div class="text-sm text-[var(--mute)] mb-3">How comprehensive a plan to generate per priority tier.</div>
+          <table class="w-full">
+            <thead><tr><th class="text-left p-1">Priority</th><th class="text-left p-1">Objectives</th><th class="text-left p-1">KPIs</th><th class="text-left p-1">Actions</th></tr></thead>
+            <tbody class="text-sm">
+              <tr><td class="p-1">Critical</td><td class="p-1">4–6</td><td class="p-1">12–20</td><td class="p-1">25–40</td></tr>
+              <tr><td class="p-1">High</td><td class="p-1">3–4</td><td class="p-1">8–12</td><td class="p-1">15–25</td></tr>
+              <tr><td class="p-1">Standard</td><td class="p-1">2–3</td><td class="p-1">5–8</td><td class="p-1">8–15</td></tr>
+              <tr><td class="p-1">Light-touch</td><td class="p-1">1–2</td><td class="p-1">3–5</td><td class="p-1">4–8</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Action item detail modal -->
+<div class="modal-bg" id="item-modal">
+  <div class="modal" id="item-modal-content"></div>
+</div>
+
+<script>
+// ============ Portfolio data ============
+const companies = [
+  {name:"Northstar Logistics", lead:"Maya Reyes", health:7, priority:"Standard", progress:58, kpis:"7 / 9", last:"Apr 22"},
+  {name:"Lumen Health", lead:"David Kim", health:5, priority:"High", progress:34, kpis:"4 / 8", last:"Apr 21"},
+  {name:"Forge Robotics", lead:"Maya Reyes", health:8, priority:"Light-touch", progress:71, kpis:"5 / 5", last:"Apr 18"},
+  {name:"Tessera Foods", lead:"Priya Shah", health:4, priority:"Critical", progress:42, kpis:"4 / 6", last:"Apr 23"},
+  {name:"Atlas Education", lead:"David Kim", health:6, priority:"Standard", progress:50, kpis:"6 / 8", last:"Apr 19"},
+  {name:"Riverbed Analytics", lead:"Maya Reyes", health:9, priority:"Light-touch", progress:80, kpis:"5 / 5", last:"Apr 22"},
+  {name:"Quill", lead:"Priya Shah", health:7, priority:"Standard", progress:62, kpis:"7 / 8", last:"Apr 22"},
+  {name:"Solano Energy", lead:"Tom Lin", health:6, priority:"High", progress:0, kpis:"—", last:"Apr 20"},
+  {name:"Beacon Insurance", lead:"David Kim", health:3, priority:"Critical", progress:0, kpis:"—", last:"Apr 15"},
+  {name:"Holloway", lead:"Priya Shah", health:8, priority:"Standard", progress:64, kpis:"6 / 7", last:"Apr 22"},
+  {name:"Mantle Materials", lead:"Tom Lin", health:5, priority:"High", progress:0, kpis:"—", last:"—"},
+  {name:"Cinder", lead:"Tom Lin", health:7, priority:"Standard", progress:0, kpis:"—", last:"Apr 24"},
+];
+document.getElementById("portfolio-rows").innerHTML = companies.map(c => `
+  <tr class="row" style="border-top:1px solid var(--line-soft);" data-screen="company">
+    <td class="p-3">${c.name}</td>
+    <td class="p-3"><span class="health-pill h-${c.health}">${c.health}</span></td>
+    <td class="p-3"><span class="chip priority-${c.priority}">${c.priority}</span></td>
+    <td class="p-3 text-[var(--mute)]">${c.lead}</td>
+    <td class="p-3" style="min-width:140px">${c.progress>0?`<div class="progress-bar"><div class="progress-fill" style="width:${c.progress}%"></div></div><div class="text-xs text-[var(--mute)] mt-1 label">${c.progress}%</div>`:'<span class="text-[var(--mute)] text-sm">—</span>'}</td>
+    <td class="p-3 text-sm">${c.kpis}</td>
+    <td class="p-3 text-[var(--mute)] text-sm">${c.last}</td>
+  </tr>
+`).join("");
+
+// ============ Screen routing ============
+function go(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(s => s.classList.remove('active'));
+  const s = document.getElementById('screen-'+screen);
+  if (s) s.classList.add('active');
+  const n = document.querySelector('.nav-item[data-screen="'+screen+'"]');
+  if (n) n.classList.add('active');
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-screen]').forEach(el => {
+  el.addEventListener('click', e => { e.stopPropagation(); go(el.dataset.screen); });
+});
+
+// ============ KPI charts ============
+const kpis = [
+  { type:"chart", name:"Pipeline coverage", unit:"×", baseline:1.4, target:2.5, direction:"up", readings:[{m:"Apr", v:1.7}] },
+  { type:"chart", name:"Months of runway", unit:" mo", baseline:9, target:14, direction:"up", readings:[{m:"Apr", v:10}] },
+  { type:"chart", name:"Burn multiple", unit:"×", baseline:1.6, target:0.7, direction:"down", readings:[{m:"Apr", v:1.4}] },
+  { type:"chart", name:"New retail SKUs placed", unit:"", baseline:0, target:3, direction:"up", readings:[{m:"Apr", v:0}] },
+  { type:"missing", name:"NRR — top 20 retailers", baselineLabel:"—", targetLabel:"baseline this quarter", note:"April reading missing. Re-prompt sent to CFO@tessera Apr 23." },
+  { type:"progress", name:"Time-to-shortlist (CRO)", baselineLabel:"Day 0", targetLabel:"≤ 30 days", current:14, total:30, note:"On pace · 16 days remaining" },
+];
+function renderKPI(kpi) {
+  if (kpi.type === "missing") {
+    return `
+      <div class="kpi-card">
+        <div class="kpi-label">${kpi.name}</div>
+        <div class="flex items-baseline gap-3 mt-2">
+          <div class="big-value text-[var(--mute)]">—</div>
+          <div class="delta bad">April reading missing</div>
+        </div>
+        <div class="text-xs text-[var(--bad)] mt-3 flex items-start gap-2">
+          <i data-lucide="alert-circle" style="width:13px;height:13px;margin-top:1px;flex-shrink:0"></i>
+          <span>${kpi.note}</span>
+        </div>
+        <div class="kpi-foot mt-3">Target: ${kpi.targetLabel}</div>
+      </div>
+    `;
+  }
+  if (kpi.type === "progress") {
+    const pct = Math.round(100 * kpi.current / kpi.total);
+    const remaining = kpi.total - kpi.current;
+    return `
+      <div class="kpi-card">
+        <div class="kpi-label">${kpi.name}</div>
+        <div class="flex items-baseline gap-3 mt-2">
+          <div class="big-value">Day ${kpi.current}</div>
+          <div class="delta good">${remaining} days remaining</div>
+        </div>
+        <div class="mt-3">
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <div class="text-xs text-[var(--mute)] mt-1 label">${pct}% of allowed time</div>
+        </div>
+        <div class="kpi-foot mt-3">Target: ${kpi.targetLabel}</div>
+      </div>
+    `;
+  }
+  // Chart tile
+  const lastReading = kpi.readings[kpi.readings.length - 1];
+  const current = lastReading ? lastReading.v : kpi.baseline;
+  const delta = current - kpi.baseline;
+  const towardTarget = (kpi.direction === "up" && delta > 0) || (kpi.direction === "down" && delta < 0);
+  const arrow = delta > 0 ? "↑" : delta < 0 ? "↓" : "→";
+  const deltaClass = delta === 0 ? "flat" : towardTarget ? "good" : "bad";
+  const deltaText = delta === 0
+    ? `no change from ${kpi.baseline}${kpi.unit} baseline`
+    : `${arrow} ${Math.abs(delta).toFixed(1)}${kpi.unit} from ${kpi.baseline}${kpi.unit} baseline`;
+
+  const W = 600, H = 100;
+  const padL = 14, padR = 92, padT = 14, padB = 18;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const months = ["Apr", "May", "Jun"];
+  const xFor = i => padL + (innerW * i / 3);
+  const allVals = [kpi.baseline, kpi.target, ...kpi.readings.map(r=>r.v)];
+  let yMin = Math.min(...allVals);
+  let yMax = Math.max(...allVals);
+  const range = yMax - yMin || 1;
+  yMin -= range * 0.20; yMax += range * 0.20;
+  const yFor = v => padT + innerH * (1 - (v - yMin) / (yMax - yMin));
+  const targY = yFor(kpi.target);
+  const points = [{x: xFor(0), y: yFor(kpi.baseline)}, ...kpi.readings.map(r => ({x: xFor(months.indexOf(r.m)+1), y: yFor(r.v)}))];
+  const pathD = points.map((p,i) => `${i===0?"M":"L"}${p.x},${p.y}`).join(" ");
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}">`;
+  svg += `<line class="target" x1="${padL}" x2="${W-padR}" y1="${targY}" y2="${targY}" />`;
+  svg += `<text class="level-label" x="${W-padR+8}" y="${targY+4}" style="fill:#1f5d3f;font-weight:600;font-size:11px;">Target ${kpi.target}${kpi.unit}</text>`;
+  for (let i=0; i<3; i++) {
+    svg += `<text class="axis-label" x="${xFor(i+1)}" y="${H-4}" text-anchor="middle" style="font-size:10px;">${months[i]}</text>`;
+  }
+  svg += `<path class="actual" d="${pathD}" />`;
+  kpi.readings.forEach(r => {
+    const x = xFor(months.indexOf(r.m)+1), y = yFor(r.v);
+    svg += `<circle class="actual-pt" cx="${x}" cy="${y}" r="3.5" />`;
+  });
+  svg += `</svg>`;
+
+  return `
+    <div class="kpi-card">
+      <div class="kpi-label">${kpi.name}</div>
+      <div class="flex items-baseline gap-3 mt-2 flex-wrap">
+        <div class="big-value">${current}${kpi.unit}</div>
+        <div class="delta ${deltaClass}">${deltaText}</div>
+      </div>
+      <div class="kpi-chart mt-2">${svg}</div>
+    </div>
+  `;
+}
+document.getElementById("kpi-grid").innerHTML = kpis.map(renderKPI).join("");
+
+// ============ Action items ============
+const TODAY = new Date(2026, 3, 26); // April 26 2026 (Sunday)
+
+const items = [
+  // Past completed
+  {id:101, title:"Plan finalized & approved", pillar:"Strategy", owner:"Ariella · GF", due:"2026-04-18", status:"done", desc:"Q2 plan reviewed and approved by Ariella."},
+  {id:102, title:"CFO advisor pool review", pillar:"Strategy", owner:"Priya · GF", due:"2026-04-19", status:"done", desc:"Initial scoping call with three Greenfield CFO advisors. Picked Alicia Rao to lead burn-multiple workstream."},
+  {id:103, title:"Sales team kickoff", pillar:"Sales Execution", owner:"Priya · GF", due:"2026-04-21", status:"done", desc:"Kickoff with founder + commercial team to walk through Q2 objectives."},
+
+  // Overdue
+  {id:1, title:"Refresh sell sheet", pillar:"Sales Execution", owner:"Founder", due:"2026-04-22", status:"overdue", desc:"Update one-pager to reflect new pricing, hero SKU positioning, and recent press wins. Required before broker outreach can begin."},
+  {id:2, title:"Send Whole Foods sample sheet to Carla (NE buyer)", pillar:"Sales Execution", owner:"Founder", due:"2026-04-24", status:"overdue", desc:"Carla requested updated sample assortment + sell sheet last week; commitment was Friday."},
+
+  // Current week / upcoming
+  {id:3, title:"Build 14-day rolling cash model", pillar:"Strategy", owner:"CFO @ Tessera", due:"2026-04-30", status:"in_progress", desc:"Standalone 14-day cash flow model with weekly forecast vs actual. Reviewed with Alicia each Thursday."},
+  {id:4, title:"CFO advisor working session", pillar:"Strategy", owner:"Priya · GF", due:"2026-05-01", status:"not_started", desc:"First deep-dive with Alicia Rao on cost line items and Amazon pricing rebuild."},
+  {id:5, title:"Source 3 broker intros (MA / SE)", pillar:"Sales Execution", owner:"Priya · GF", due:"2026-05-05", status:"in_progress", desc:"Surface 3 broker introductions for Mid-Atlantic and Southeast grocery channels via Greenfield network. Goal: warm intros, not cold outreach."},
+  {id:6, title:"Stand up CRM hygiene", pillar:"Sales Execution", owner:"Founder", due:"2026-05-08", status:"not_started", desc:"Define 6 pipeline stages, weekly forecast cadence. Aligned to playbook PB-04."},
+  {id:7, title:"Buyer feedback loop kickoff", pillar:"Pipeline Generation", owner:"Founder + Derek", due:"2026-05-10", status:"not_started", desc:"Standing weekly call with Derek Tran to triage buyer feedback into product/positioning input."},
+  {id:8, title:"Open CRO search engagement", pillar:"People & Org", owner:"Maya · GF", due:"2026-05-15", status:"not_started", desc:"Sign engagement letter with Marcus Nye / True Search. Job spec sign-off."},
+  {id:9, title:"Co-attend buyer call #1", pillar:"Sales Execution", owner:"Priya · GF", due:"2026-05-20", status:"not_started", desc:"Joint pitch with Janet Morales to top regional grocery buyer."},
+  {id:10, title:"Amazon repricing analysis", pillar:"Strategy", owner:"Founder", due:"2026-05-25", status:"not_started", desc:"Channel UE rebuild — variable cost stack, ad spend efficiency, recommended price floors."},
+  {id:11, title:"Pause Amazon paid ads pending repricing", pillar:"Strategy", owner:"Founder", due:"2026-05-30", status:"not_started", desc:"Operator-added action: pause paid until repricing analysis is approved."},
+
+  // June
+  {id:12, title:"CRO candidate shortlist (5)", pillar:"People & Org", owner:"Tom · GF", due:"2026-06-01", status:"not_started"},
+  {id:13, title:"Co-attend buyer call #2", pillar:"Sales Execution", owner:"Priya · GF", due:"2026-06-10", status:"not_started"},
+  {id:14, title:"CRO final round + offer", pillar:"People & Org", owner:"Founder", due:"2026-06-15", status:"not_started"},
+  {id:15, title:"Q2 closeout draft review", pillar:"Strategy", owner:"Priya · GF", due:"2026-06-25", status:"not_started"},
+];
+
+const activity = {
+  1: [
+    {date:"Apr 18", type:"created", body:"Action item created with plan approval. Owner: Founder."},
+    {date:"Apr 19, 9:00am", type:"slack", body:"Apollo posted weekly nudge to @founder via #tessera-foods."},
+    {date:"Apr 22", type:"due", body:"Due date passed."},
+    {date:"Apr 23, 9:00am", type:"alert", body:"Apollo posted overdue alert in #tessera-foods."},
+    {date:"Apr 24, 4:12pm", type:"comment", body:"Founder: 'Designer scoped — first draft Friday.'"},
+  ],
+  2: [
+    {date:"Apr 17", type:"created", body:"Created during plan review (added by Priya)."},
+    {date:"Apr 19", type:"slack", body:"Apollo: weekly nudge sent."},
+    {date:"Apr 24", type:"due", body:"Due date passed."},
+    {date:"Apr 25", type:"alert", body:"Apollo: overdue reminder sent to founder."},
+  ],
+  3: [
+    {date:"Apr 18", type:"created", body:"Created with plan approval."},
+    {date:"Apr 22", type:"comment", body:"CFO @ Tessera: 'Got the template from Alicia, building this week.'"},
+    {date:"Apr 24", type:"slack", body:"CFO @ Tessera: 'Draft v1 will be ready Mon Apr 28.'"},
+  ],
+  5: [
+    {date:"Apr 18", type:"created", body:"Created with plan approval."},
+    {date:"Apr 21", type:"comment", body:"Priya: 'Targeting Janet Morales (warm) + Derek Tran (warm) + 1 more TBD via Whole Foods alum.'"},
+    {date:"Apr 24", type:"slack", body:"Priya: 'Calls scheduled w/ Janet (Fri Apr 24) and Derek (Tue Apr 28). Third name TBD.'"},
+  ],
+  101: [
+    {date:"Apr 18", type:"created", body:"Plan submitted by Priya."},
+    {date:"Apr 18", type:"comment", body:"Ariella approved with one edit (lowered pipeline coverage target 3× → 2.5×)."},
+  ],
+};
+
+function statusClass(s) { return s === "overdue" ? "overdue" : s === "in_progress" ? "in-progress" : s === "done" ? "done" : "not-started"; }
+function statusLabel(s) { return s === "overdue" ? "Overdue" : s === "in_progress" ? "In progress" : s === "done" ? "Done" : "Not started"; }
+function pillarChipClass(p) {
+  return p === "Sales Execution" ? "stage-SalesExec"
+    : p === "People & Org" ? "stage-People"
+    : p === "Strategy" ? "stage-Strategy"
+    : p === "Pipeline Generation" ? "stage-Pipeline"
+    : p === "Operational Infrastructure" ? "stage-Ops"
+    : p === "Customer Success" ? "stage-CS"
+    : p === "Partnerships & Alliances" ? "stage-Partnerships"
+    : "priority-Standard";
+}
+function fmtDue(dStr) {
+  const d = new Date(dStr + "T00:00:00");
+  return d.toLocaleDateString("en-GB", {weekday:"short", day:"numeric", month:"short"});
+}
+function daysOverdue(dStr) {
+  const d = new Date(dStr + "T00:00:00");
+  return Math.floor((TODAY - d) / 86400000);
+}
+
+// ============ Overdue box ============
+const overdue = items.filter(i => i.status === "overdue");
+document.getElementById("overdue-count").textContent = overdue.length === 1 ? "1 item" : `${overdue.length} items`;
+document.getElementById("overdue-list").innerHTML = overdue.map(i => `
+  <div class="panel cursor-pointer" style="padding:14px;border-color:#ecc4c0;background:#fff;" data-item-id="${i.id}">
+    <div class="flex items-center justify-between mb-1">
+      <span class="chip ${pillarChipClass(i.pillar)}" style="font-size:10.5px;">${i.pillar}</span>
+      <span class="text-xs text-[var(--bad)] label">${daysOverdue(i.due)}d overdue</span>
+    </div>
+    <div class="text-sm mt-1" style="font-weight:600;">${i.title}</div>
+    <div class="text-xs text-[var(--mute)] mt-1">${i.owner} · was due ${fmtDue(i.due)}</div>
+  </div>
+`).join("");
+
+// ============ Calendar ============
+const calMonthLabel = document.getElementById("cal-month-label");
+const calGrid = document.getElementById("cal-grid");
+let displayedMonth = new Date(2026, 3, 1); // April 2026
+
+function startOfWeek(d) {
+  const x = new Date(d);
+  const day = x.getDay();
+  const diff = day === 0 ? -6 : 1 - day; // shift to Monday
+  x.setDate(x.getDate() + diff);
+  x.setHours(0,0,0,0);
+  return x;
+}
+function sameDay(a,b) { return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
+function fmtMonth(d) { return d.toLocaleDateString("en-GB", {month:"long", year:"numeric"}); }
+
+function renderCalendar() {
+  calMonthLabel.textContent = fmtMonth(displayedMonth);
+  const monthFirst = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth(), 1);
+  const gridStart = startOfWeek(monthFirst);
+  const todayWeekStart = startOfWeek(TODAY);
+  const dayHeads = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  let html = dayHeads.map(d => `<div class="cal-day-head">${d}</div>`).join("");
+  for (let i=0; i<35; i++) {
+    const d = new Date(gridStart);
+    d.setDate(d.getDate() + i);
+    const inDisplayed = d.getMonth() === displayedMonth.getMonth();
+    const isCurrentWeek = sameDay(startOfWeek(d), todayWeekStart);
+    const isToday = sameDay(d, TODAY);
+    const dayItems = items.filter(it => sameDay(new Date(it.due+"T00:00:00"), d));
+    const itemsHtml = dayItems.map(it => `
+      <div class="cal-item ${statusClass(it.status)}" data-item-id="${it.id}" title="${it.title}">${it.title.length > 28 ? it.title.slice(0,27)+"…" : it.title}</div>
+    `).join("");
+    html += `<div class="cal-cell ${inDisplayed?"":"faded"} ${isCurrentWeek?"current-week":""} ${isToday?"today":""}">
+      <span class="day-num">${d.getDate()}</span>
+      ${itemsHtml}
+    </div>`;
+  }
+  calGrid.innerHTML = html;
+  // Attach click handlers
+  calGrid.querySelectorAll('.cal-item').forEach(el => {
+    el.addEventListener('click', () => openItemModal(parseInt(el.dataset.itemId)));
+  });
+}
+
+document.getElementById("cal-prev").addEventListener("click", () => {
+  displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth()-1, 1);
+  renderCalendar();
+});
+document.getElementById("cal-next").addEventListener("click", () => {
+  displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth()+1, 1);
+  renderCalendar();
+});
+document.getElementById("cal-today").addEventListener("click", () => {
+  displayedMonth = new Date(TODAY.getFullYear(), TODAY.getMonth(), 1);
+  renderCalendar();
+});
+
+// ============ Modal ============
+const modalBg = document.getElementById("item-modal");
+const modalContent = document.getElementById("item-modal-content");
+function openItemModal(id) {
+  const it = items.find(x => x.id === id);
+  if (!it) return;
+  const log = activity[id] || [{date: fmtDue(it.due), type: "created", body: "Action item created with plan approval."}];
+  const statusBg = statusClass(it.status);
+  modalContent.innerHTML = `
+    <div style="padding:22px 24px; border-bottom: 1px solid var(--line);">
+      <div class="flex items-start justify-between gap-3">
+        <div style="flex:1;">
+          <div class="text-xs text-[var(--mute)] label">${it.owner} · was due ${fmtDue(it.due)}</div>
+          <h3 class="text-xl mt-1" style="font-weight:600;">${it.title}</h3>
+        </div>
+        <button class="btn-ghost" id="modal-close" style="padding:6px 8px;"><i data-lucide="x" style="width:14px;height:14px"></i></button>
+      </div>
+      <div class="flex gap-2 mt-3 flex-wrap">
+        <span class="chip ${pillarChipClass(it.pillar)}">${it.pillar}</span>
+        <span class="chip ${statusBg === "overdue" ? "priority-Critical" : statusBg === "in-progress" ? "stage-People" : statusBg === "done" ? "stage-Execute" : "priority-Standard"}">${statusLabel(it.status)}</span>
+      </div>
+    </div>
+    <div style="padding:20px 24px;">
+      ${it.desc ? `<div class="text-sm" style="line-height:1.55;">${it.desc}</div>` : '<div class="text-sm text-[var(--mute)] italic">No description.</div>'}
+      <div class="text-xs uppercase tracking-wider text-[var(--mute)] mt-5 mb-3 label">Activity</div>
+      <div class="space-y-3">
+        ${log.map((l, idx) => `
+          <div class="flex gap-3">
+            <div class="flex flex-col items-center">
+              <div class="timeline-dot ${l.type}"></div>
+              ${idx < log.length-1 ? '<div class="timeline-line"></div>' : ''}
+            </div>
+            <div class="flex-1 pb-1">
+              <div class="text-xs text-[var(--mute)] label">${l.date}</div>
+              <div class="text-sm mt-0.5">${l.body}</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="mt-5">
+        <textarea class="input" rows="2" placeholder="Add an update or comment…"></textarea>
+        <div class="flex gap-2 mt-2 justify-end">
+          <button class="btn-ghost"><i data-lucide="check" style="width:14px;height:14px"></i> Mark done</button>
+          <button class="btn">Post update</button>
+        </div>
+      </div>
+    </div>
+  `;
+  modalBg.classList.add("active");
+  lucide.createIcons({attrs: {}});
+  document.getElementById("modal-close").addEventListener("click", closeModal);
+}
+function closeModal() { modalBg.classList.remove("active"); }
+modalBg.addEventListener("click", e => { if (e.target === modalBg) closeModal(); });
+
+// Wire overdue cards as click-to-open
+document.querySelectorAll('#overdue-list [data-item-id]').forEach(el => {
+  el.addEventListener('click', () => openItemModal(parseInt(el.dataset.itemId)));
+});
+
+// Initial render
+renderCalendar();
+lucide.createIcons();
+</script>
+</body>
+</html>

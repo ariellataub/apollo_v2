@@ -2,6 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import {
+  buildRecentQuarters,
+  formatQuarter,
+  isValidQuarter,
+} from "@/lib/quarter";
 import type {
   AssessmentPriority,
   AssessmentStatus,
@@ -180,7 +186,113 @@ export async function revertAssessmentAction(
   revalidatePath("/portfolio");
 }
 
-export async function replaceAssessmentAction(
+export type UpdateQuarterResult =
+  | { ok: true; quarter: string }
+  | {
+      ok: false;
+      error: string;
+      existing?: { status: AssessmentStatus; quarter: string };
+    };
+
+export async function updateAssessmentQuarterAction(
+  assessmentId: string,
+  newQuarter: string,
+  replace: boolean,
+): Promise<UpdateQuarterResult> {
+  if (!isValidQuarter(newQuarter) || !buildRecentQuarters().includes(newQuarter)) {
+    return { ok: false, error: `Invalid quarter "${newQuarter}".` };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data: source, error: srcErr } = await supabase
+    .from("health_assessments")
+    .select("id, company_id, quarter, uploaded_pdf_path")
+    .eq("id", assessmentId)
+    .maybeSingle();
+
+  if (srcErr) return { ok: false, error: srcErr.message };
+  if (!source) return { ok: false, error: "Assessment not found." };
+
+  if (newQuarter === source.quarter) {
+    return { ok: true, quarter: newQuarter };
+  }
+
+  const { data: target, error: targetErr } = await supabase
+    .from("health_assessments")
+    .select("id, status, quarter, uploaded_pdf_path")
+    .eq("company_id", source.company_id)
+    .eq("quarter", newQuarter)
+    .maybeSingle();
+
+  if (targetErr) return { ok: false, error: targetErr.message };
+
+  if (target && !replace) {
+    return {
+      ok: false,
+      error: `An assessment already exists at ${formatQuarter(newQuarter)}.`,
+      existing: { status: target.status, quarter: target.quarter },
+    };
+  }
+
+  let adminSupabase;
+  try {
+    adminSupabase = createSupabaseAdminClient();
+  } catch (err) {
+    return {
+      ok: false,
+      error:
+        err instanceof Error
+          ? `Server misconfiguration: ${err.message}`
+          : "Server misconfiguration",
+    };
+  }
+
+  // Tear down the target row + its PDF if replacing.
+  if (target && replace) {
+    if (target.uploaded_pdf_path) {
+      await adminSupabase.storage
+        .from("assessments")
+        .remove([target.uploaded_pdf_path]);
+    }
+    const { error: delErr } = await supabase
+      .from("health_assessments")
+      .delete()
+      .eq("id", target.id);
+    if (delErr) {
+      return { ok: false, error: `Failed to clear target: ${delErr.message}` };
+    }
+  }
+
+  // Move the source's PDF to the canonical new-quarter path so a future
+  // upload to the OLD quarter won't overwrite this assessment's PDF.
+  const newPath = `${source.company_id}/${newQuarter}/assessment.pdf`;
+  let updatedPath: string | null = source.uploaded_pdf_path;
+  if (source.uploaded_pdf_path && source.uploaded_pdf_path !== newPath) {
+    await adminSupabase.storage.from("assessments").remove([newPath]);
+    const { error: moveErr } = await adminSupabase.storage
+      .from("assessments")
+      .move(source.uploaded_pdf_path, newPath);
+    if (moveErr) {
+      return { ok: false, error: `Failed to move PDF: ${moveErr.message}` };
+    }
+    updatedPath = newPath;
+  }
+
+  const { error: updErr } = await supabase
+    .from("health_assessments")
+    .update({ quarter: newQuarter, uploaded_pdf_path: updatedPath })
+    .eq("id", assessmentId);
+
+  if (updErr) {
+    return { ok: false, error: `Failed to update quarter: ${updErr.message}` };
+  }
+
+  revalidatePath(`/companies/${source.company_id}`);
+  revalidatePath("/portfolio");
+  return { ok: true, quarter: newQuarter };
+}
+
+export async function deleteAssessmentAction(
   assessmentId: string,
   _formData?: FormData,
 ) {
